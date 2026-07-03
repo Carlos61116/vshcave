@@ -1,0 +1,15 @@
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+
+# CMake build output
+out/
+build/
+
+# Common C++ build artifacts
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.log

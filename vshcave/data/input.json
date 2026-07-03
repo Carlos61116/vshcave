@@ -1,0 +1,14 @@
+{
+  "format_version": 1,
+  "grid": { "width": 100, "height": 60 },
+  "ca_rules": {
+    "iterations": 6,
+    "birth_threshold": 5,
+    "survival_threshold": 4
+  },
+  "background_fill_probability": 0.05,
+  "rooms": [
+    { "center": { "x": 3, "y": 2 }, "radius": 2, "fill_probability": 0.6 },
+    { "center": { "x": 6, "y": 3 }, "radius": 2, "fill_probability": 0.6 }
+  ]
+}

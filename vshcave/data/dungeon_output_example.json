@@ -1,0 +1,21 @@
+{
+  "format_version": 1,
+  "master_seed_used": 4271,
+  "grid": {
+    "width": 10,
+    "height": 6,
+    "cells": [
+      [1,1,1,1,1,1,1,1,1,1],
+      [1,1,0,0,0,0,0,1,1,1],
+      [1,0,0,0,0,0,0,0,1,1],
+      [1,0,0,1,1,0,0,0,1,1],
+      [1,1,0,0,0,0,0,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1]
+    ]
+  },
+  "rooms": [
+    { "center": { "x": 3, "y": 2 }, "radius": 2, "seed_local": 891234, "connected_area": 22, "component_id": 0 },
+    { "center": { "x": 6, "y": 3 }, "radius": 2, "seed_local": 372910, "connected_area": 22, "component_id": 0 }
+  ],
+  "generated_at": "2026-07-02T10:30:00Z"
+}

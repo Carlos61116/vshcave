@@ -49,5 +49,5 @@ namespace vshcave
 		std::vector<vshcave::Room> rooms;
 	};
 
-	vshcave::Dungeon load_dungeon(std::uint32_t seed);
+	vshcave::Dungeon load_dungeon();
 }

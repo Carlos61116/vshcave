@@ -2,6 +2,7 @@
 #include "vshcave/vshjson.h"
 #include "vshcave/vshrandom.h"
 #include "vshcave/vshnoise.h"
+#include <iomanip>
 namespace vshcave
 {
 	vshcave::Dungeon load_dungeon()
@@ -39,33 +40,66 @@ void print_grid(const std::vector<vshcave::CellType>& cells, const vshcave::Grid
 
 
 
+void print_flood_cells(const vshcave::FloodCells& flood, const vshcave::GridInfo& grid_info)
+{
+	for (int y = 0; y < grid_info.height; y++)
+	{
+		for (int x = 0; x < grid_info.width; x++)
+		{
+			int index = y * grid_info.width + x;
+			int id = flood.component_id[index];
+
+			if (id == -1)
+				std::cout << " . ";
+			else
+				std::cout << std::setw(2) << id << ' ';
+		}
+		std::cout << '\n';
+	}
+
+	std::cout << "\nTamanos por bolsa:\n";
+	for (std::size_t i = 0; i < flood.sizes.size(); i++)
+	{
+		std::cout << "  bolsa " << i << ": " << flood.sizes[i] << " celdas\n";
+	}
+}
+
+
 int main()
 {
-	std::cout << "Hello CMake." << std::endl;
-
-
-
-
 	auto dungeon_loaded = vshcave::load_dungeon();
 
 	auto engine = vshcave::vshrandom::engine(dungeon_loaded.master_seed);
 
+	std::cout <<"Seed: " << dungeon_loaded.master_seed << "\n";
 
-	auto cells = vshcave::generate_cells(dungeon_loaded.grid_info, engine);
+	auto cells = vshcave::generate_cells(dungeon_loaded.grid_info,dungeon_loaded.background_fill_probability, engine);
 
 	print_grid(cells, dungeon_loaded.grid_info);
 
-	std::vector<vshcave::CellType> new_cells{};
+	std::vector<vshcave::CellType> new_cells = cells;
 
-	for (std::uint16_t i = 0; i <= dungeon_loaded.ca_rules.iterations; i++)
+	for (std::uint16_t i = 0; i < dungeon_loaded.ca_rules.iterations; i++)
 	{
-		new_cells= vshcave::apply_ca_step(cells, dungeon_loaded.grid_info, dungeon_loaded.ca_rules);
+		new_cells= vshcave::apply_ca_step(new_cells, dungeon_loaded.grid_info, dungeon_loaded.ca_rules);
 	}
 
 	std::cout << "\n";
 	std::cout << "\n";
 
 	print_grid(new_cells, dungeon_loaded.grid_info);
+
+	auto flood = vshcave::flood_fill(new_cells, dungeon_loaded.grid_info);
+
+	std::cout << "\n";
+	std::cout << "\n";
+
+	print_flood_cells(flood, dungeon_loaded.grid_info);
+	
+	std::cout << "\n";
+	std::cout << "\n";
+
+	print_grid(vshcave::clean_map(dungeon_loaded.grid_info,flood), dungeon_loaded.grid_info);
 
 	return 0;
 }

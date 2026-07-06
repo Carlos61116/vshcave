@@ -26,15 +26,22 @@ namespace vshcave
 
 	};
 
-	struct RoomPosition
+	struct GridPosition
 	{
 		int x;
 		int y;
 	};
 
+	struct BubbleCenter
+	{
+		float x;
+		float y;
+		int component_id;
+	};
+
 	struct Room
 	{
-		RoomPosition room_position;
+		GridPosition room_position;
 		float radius;
 		float fill_probability;
 	};

@@ -19,7 +19,7 @@ namespace vshcave
 
 		for (size_t i = 0; i < json_info["rooms"].size(); i++)
 		{
-			rooms.push_back(vshcave::Room{ .room_position = vshcave::RoomPosition{.x = json_info["rooms"][i]["center"]["x"],.y = json_info["rooms"][i]["center"]["y"]},.radius = json_info["rooms"][i]["radius"],.fill_probability = json_info["rooms"][i]["fill_probability"] });
+			rooms.push_back(vshcave::Room{ .room_position = vshcave::GridPosition{.x = json_info["rooms"][i]["center"]["x"],.y = json_info["rooms"][i]["center"]["y"]},.radius = json_info["rooms"][i]["radius"],.fill_probability = json_info["rooms"][i]["fill_probability"] });
 		}
 		return vshcave::Dungeon{ .format_version = json_info["format_version"],.master_seed = resolved_seed,.grid_info = vshcave::GridInfo{.width = json_info["grid"]["width"],.height = json_info["grid"]["height"]},.ca_rules = vshcave::CA_Rules{.iterations = json_info["ca_rules"]["iterations"],.birth_threshold = json_info["ca_rules"]["birth_threshold"],.survival_threshold = json_info["ca_rules"]["survival_threshold"]},.background_fill_probability = json_info["background_fill_probability"],.rooms = rooms};
 	}
@@ -98,8 +98,43 @@ int main()
 	
 	std::cout << "\n";
 	std::cout << "\n";
+	auto it = std::max_element(flood.sizes.begin(), flood.sizes.end());
+	int valor_maximo = *it;
+	int umbr = 6;   
+	auto bubble_remaining = vshcave::decide_bubbles_survivors(flood.sizes, umbr);
 
-	print_grid(vshcave::clean_map(dungeon_loaded.grid_info,flood), dungeon_loaded.grid_info);
+	auto final_map = vshcave::clean_map(dungeon_loaded.grid_info, flood);
+	print_grid(final_map, dungeon_loaded.grid_info);
+
+
+	auto centers = vshcave::bubble_center(flood, dungeon_loaded.grid_info, bubble_remaining);
+
+
+	auto prim_result = vshcave::prim_calculator(centers);
+
+	for (const auto& edge : prim_result)
+	{
+		auto cells_a = vshcave::get_bubble_cells(flood.component_id, dungeon_loaded.grid_info, edge.from);
+		auto cells_b = vshcave::get_bubble_cells(flood.component_id, dungeon_loaded.grid_info, edge.to);
+
+		auto pair = vshcave::closest_pair(cells_a, cells_b);
+		auto breseham = vshcave::bresenham_line(pair.from, pair.to);
+		std::cout << "Pasillo sala " << edge.from << " -> sala " << edge.to
+			<< ": (" << pair.from.x << "," << pair.from.y << ") a ("
+			<< pair.to.x << "," << pair.to.y << ")\n";
+
+		
+		vshcave::make_up_bresenham(final_map, breseham,dungeon_loaded.grid_info,1);
+		
+
+	}
+
+	std::cout << "\n";
+	std::cout << "\n";
+
+	print_grid(final_map, dungeon_loaded.grid_info);
+
+
 
 	return 0;
 }
